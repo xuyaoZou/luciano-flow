@@ -201,3 +201,5 @@ MIT License — 随意使用，欢迎 PR。
 一个人做的 AI 视频工作流引擎。如果你也在做 AI 视频相关的东西，欢迎交流。
 
 Issue / PR / Star 都欢迎。
+
+💬 联系方式：lucianozxy@163.com

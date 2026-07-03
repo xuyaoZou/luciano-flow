@@ -201,3 +201,5 @@ MIT License — Use freely, PRs welcome.
 A solo-built AI video workflow engine. If you're working on AI video, let's connect.
 
 Issues / PRs / Stars are all welcome.
+
+💬 Contact: lucianozxy@163.com
