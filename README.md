@@ -1,201 +1,203 @@
-# 🎬 Luciano
+# 🎬 VideoFlow
 
-> **ComfyUI for Video** — 节点化 AI 视频创作引擎
+> **ComfyUI for Video** — Node-based AI video creation engine
 
-Luciano 是一个基于节点画布的 AI 视频创作平台，支持将多个 AI 模型（Kling、Seedance 等）的能力组合成可视化工作流。
+VideoFlow is a node-canvas AI video creation platform that lets you compose multiple AI models (Kling, Seedance, etc.) into visual workflows.
+
+[English](./README.md) | [简体中文](./README.zh-CN.md)
 
 ![Flow Canvas Preview](docs/images/flow-canvas-preview.jpg)
 
-## ✨ 特性
+## ✨ Features
 
-- **节点画布** — ComfyUI 式的可视化工作流编辑器，拖拽节点、连线、组合能力
-- **多模型适配器** — 统一接口对接 Kling AI、火山方舟 Seedance 等模型，一个适配器接入，全局可用
-- **DAG 执行引擎** — 拓扑排序 + 逐层并行执行 + 端口数据流自动传递
-- **双模式创作** — Agent 对话式创作（小白友好）+ 专业节点画布（精准控制）
-- **实时反馈** — SSE 推送执行进度，节点完成即时显示结果
-- **媒体资产管理** — 本地/S3 双存储后端，自动下载落地，前端 Blob URL 缓存
+- **Node Canvas** — ComfyUI-style visual workflow editor: drag nodes, connect ports, compose capabilities
+- **Multi-Model Adapters** — Unified interface for Kling AI, Volcengine Seedance, and more. Implement one adapter, use it everywhere
+- **DAG Execution Engine** — Topological sort + layered parallel execution + automatic port data flow
+- **Dual Mode** — Agent chat mode (beginner-friendly) + Professional node canvas (precise control)
+- **Real-time Feedback** — SSE streaming for execution progress, instant results on node completion
+- **Media Management** — Local/S3 dual storage backend, auto-download, proxy delivery with auth
 
-## 🏗️ 架构概览
+## 🏗️ Architecture
 
 ```
 ┌──────────────────────────────────────────────────┐
-│                    前端 (Nuxt 3)                    │
-│   Vue Flow 画布 │ Tailwind CSS │ SSE 实时通信       │
+│                  Frontend (Nuxt 3)                 │
+│   Vue Flow Canvas │ Tailwind CSS │ SSE Streaming    │
 └────────────────────┬─────────────────────────────┘
                      │ REST + SSE
 ┌────────────────────┴─────────────────────────────┐
-│                  后端 (Spring Boot)                │
+│                Backend (Spring Boot)               │
 │  ┌──────────┐  ┌──────────┐  ┌────────────────┐   │
-│  │Flow 引擎  │  │适配器层   │  │媒体系统         │   │
-│  │DAG 拓扑   │  │Registry  │  │本地+S3 双存储   │   │
-│  │端口数据流  │  │9+ 能力   │  │代理下载         │   │
+│  │Flow Engine│  │Adapters  │  │Media System     │   │
+│  │DAG Topo  │  │Registry  │  │Local+S3 Storage │   │
+│  │Port Flow │  │9+ skills │  │Proxy Download   │   │
 │  └──────────┘  └──────────┘  └────────────────┘   │
 └────────────────────┬─────────────────────────────┘
                      │
         ┌────────────┼────────────┐
         ▼            ▼            ▼
-   Kling AI    火山方舟       PostgreSQL
+   Kling AI    Volcengine      PostgreSQL
               Seedance        + Flyway
 ```
 
-## 🚀 快速开始
+## 🚀 Quick Start
 
-### 前置要求
+### Prerequisites
 
-- Docker & Docker Compose（推荐）
-- 或：JDK 17+、Node.js 20+、PostgreSQL 16+、pnpm
+- Docker & Docker Compose (recommended)
+- Or: JDK 17+, Node.js 20+, PostgreSQL 16+, pnpm
 
-### 方式一：Docker Compose 一键启动
+### Option 1: Docker Compose (One Command)
 
 ```bash
-# 1. 克隆仓库
+# 1. Clone
 git clone https://github.com/xuyaoZou/videoflow.git
-cd luciano
+cd videoflow
 
-# 2. 配置环境变量
+# 2. Configure environment
 cp .env.example .env
-# 编辑 .env，填入你的 API Key（至少需要一个模型）
+# Edit .env, fill in your API keys (at least one model)
 
-# 3. 一键启动
+# 3. Launch
 docker compose up -d
 
-# 4. 访问
-# 前端: http://localhost:3000
-# 后端 API: http://localhost:8090
+# 4. Access
+# Frontend: http://localhost:3000
+# Backend API: http://localhost:8090
 ```
 
-### 方式二：本地开发模式
+### Option 2: Local Development
 
 ```bash
-# 1. 启动 PostgreSQL
-docker run -d --name luciano-pg \
+# 1. Start PostgreSQL
+docker run -d --name videoflow-pg \
   -e POSTGRES_DB=luciano \
   -e POSTGRES_USER=luciano \
-  -e POSTGRES_PASSWORD=luciano_dev \
+  -e POSTGRES_PASSWORD=*** \
   -p 5432:5432 \
   postgres:16-alpine
 
-# 2. 启动后端
+# 2. Start backend
 cd luciano_backend
 cp .env.adapters.example .env.adapters
-# 编辑 .env.adapters，填入 API Key
+# Edit .env.adapters, fill in API keys
 mvn spring-boot:run
 
-# 3. 启动前端
+# 3. Start frontend
 cd ../luciano-web
 pnpm install
 pnpm dev
 ```
 
-### API Key 申请
+### API Keys
 
-| 模型 | 申请地址 | 文档 |
-|------|---------|------|
-| Kling AI | https://klingai.kuaishou.com/ | 国内版用 api-beijing.klingai.com |
-| 火山方舟 Seedance | https://www.volcengine.com/product/ark | Bearer Token 认证 |
+| Model | Where to Apply | Notes |
+|-------|---------------|-------|
+| Kling AI | https://klingai.kuaishou.com/ | China: api-beijing.klingai.com |
+| Volcengine Seedance | https://www.volcengine.com/product/ark | Bearer token auth |
 
-## 🧩 核心概念
+## 🧩 Core Concepts
 
-### 节点画布
+### Node Canvas
 
-每个能力（文生视频、图生视频、文生图等）是一个节点，节点之间通过**端口**连线，数据自动流动。
+Each capability (text-to-video, image-to-video, text-to-image, etc.) is a node. Nodes connect via **ports**, and data flows automatically.
 
 ```
-[文本输入] ──prompt──→ [文生图] ──image──→ [图生视频] ──video──→ [预览]
+[Text Input] ──prompt──→ [Text-to-Image] ──image──→ [Image-to-Video] ──video──→ [Preview]
 ```
 
-### 适配器层
+### Adapter Layer
 
-实现 `ModelAdapter` 接口，`@Component` 注解自动注册。新增模型只需：
+Implement the `ModelAdapter` interface, register with `@Component`. Adding a new model is as simple as:
 
 ```java
 @Component
 public class YourAdapter implements ModelAdapter {
-    // 实现 submit/poll/download 等方法
+    // Implement submit/poll/download methods
 }
 ```
 
-### 端口类型系统
+### Port Type System
 
-15 种 PortType，支持类型兼容检查和自动转换（如 IMAGE → REFERENCE）。
+15 PortTypes with compatibility checking and automatic conversion (e.g., IMAGE → REFERENCE).
 
-## 📊 支持的能力
+## 📊 Supported Capabilities
 
-| 能力 | Kling | Seedance |
-|------|:-----:|:--------:|
-| 文生视频 (T2V) | ✅ | ✅ |
-| 图生视频 (I2V) | ✅ | ✅ |
-| 视频续写 (V2V) | ✅ | ✅ |
-| 运镜控制 (Camera) | ✅ | ✅ |
-| 文生图 (T2I) | ✅ | ✅ |
-| 图片编辑 (I2I) | ✅ | — |
-| 背景移除 | ✅ | — |
-| Omni 模型 | ✅ | — |
+| Capability | Kling | Seedance |
+|-----------|:-----:|:--------:|
+| Text-to-Video (T2V) | ✅ | ✅ |
+| Image-to-Video (I2V) | ✅ | ✅ |
+| Video Extension (V2V) | ✅ | ✅ |
+| Camera Control | ✅ | ✅ |
+| Text-to-Image (T2I) | ✅ | ✅ |
+| Image Edit (I2I) | ✅ | — |
+| Background Removal | ✅ | — |
+| Omni Model | ✅ | — |
 
-## 📁 项目结构
+## 📁 Project Structure
 
 ```
-luciano/
-├── luciano_backend/          # Spring Boot 后端
+videoflow/
+├── luciano_backend/          # Spring Boot backend
 │   ├── src/main/java/com/luciano/
-│   │   ├── adapter/          # 多模型适配器层
-│   │   │   ├── kling/        # Kling AI 适配器
-│   │   │   └── seedance/     # 火山方舟适配器
-│   │   ├── flow/             # Flow 引擎 (DAG + 端口系统)
+│   │   ├── adapter/          # Multi-model adapter layer
+│   │   │   ├── kling/        # Kling AI adapter
+│   │   │   └── seedance/     # Volcengine Seedance adapter
+│   │   ├── flow/             # Flow engine (DAG + port system)
 │   │   ├── controller/       # REST API
-│   │   ├── service/         # 业务逻辑
-│   │   └── config/          # 配置 (Security, JWT, S3)
+│   │   ├── service/          # Business logic
+│   │   └── config/           # Config (Security, JWT, S3)
 │   └── src/main/resources/
-│       ├── db/migration/    # Flyway 迁移脚本 (V1-V17)
-│       └── application.yml  # 配置 (环境变量驱动)
+│       ├── db/migration/    # Flyway migrations (V1-V17)
+│       └── application.yml  # Config (env-driven)
 │
-├── luciano-web/              # Nuxt 3 前端
+├── luciano-web/              # Nuxt 3 frontend
 │   ├── components/
-│   │   └── flow/             # Vue Flow 画布组件
-│   ├── composables/          # useAuth, useMediaLoader, useTheme 等
+│   │   └── flow/             # Vue Flow canvas components
+│   ├── composables/          # useAuth, useMediaLoader, useTheme, etc.
 │   └── pages/
 │
-└── docker-compose.yml        # 一键启动
+└── docker-compose.yml        # One-command launch
 ```
 
-## ⚠️ 当前状态
+## ⚠️ Current Status
 
-**Work in Progress** — 核心框架已完成，正在持续迭代中。
+**Work in Progress** — Core framework is complete, actively iterating.
 
-### 已完成
-- ✅ 适配器层架构 + Kling/Seedance 适配器
-- ✅ Flow 引擎 (DAG 拓扑 + 端口系统 + 数据流通)
-- ✅ Vue Flow 节点画布 (暗色主题 + 右键菜单 + 属性面板)
-- ✅ 工作流持久化 (保存/加载/执行)
-- ✅ SSE 实时执行反馈
-- ✅ 媒体系统 (本地/S3 存储 + 代理下载)
-- ✅ JWT 认证体系
-- ✅ Agent 对话模式
+### Completed
+- ✅ Adapter layer architecture + Kling/Seedance adapters
+- ✅ Flow engine (DAG topology + port system + data flow)
+- ✅ Vue Flow node canvas (dark theme + context menu + property panel)
+- ✅ Workflow persistence (save/load/execute)
+- ✅ SSE real-time execution feedback
+- ✅ Media system (local/S3 storage + proxy download)
+- ✅ JWT authentication
+- ✅ Agent chat mode
 
-### 进行中
-- 🔄 E2E 数据流验证
-- 🔄 工作流模板体系
-- 🔄 执行结果持久化与恢复
+### In Progress
+- 🔄 E2E data flow validation
+- 🔄 Workflow template system
+- 🔄 Execution result persistence & restoration
 
-### 规划中
-- 🔲 更多模型适配器 (Runway, Pika 等)
-- 🔲 TTS / 音频生成
-- 🔲 多角色一致性生成
-- 🔲 模板市场
+### Planned
+- 🔲 More model adapters (Runway, Pika, etc.)
+- 🔲 TTS / audio generation
+- 🔲 Multi-character consistency
+- 🔲 Template marketplace
 
-## 🛠️ 技术栈
+## 🛠️ Tech Stack
 
-**后端**: Java 17 · Spring Boot 3.3 · MyBatis-Plus · PostgreSQL · Flyway
-**前端**: Nuxt 3 · Vue 3.5 · Vue Flow · Tailwind CSS
-**存储**: 本地文件系统 · S3 兼容 (TOS/MinIO/AWS)
-**AI 模型**: Kling AI · 火山方舟 Seedance
+**Backend**: Java 17 · Spring Boot 3.3 · MyBatis-Plus · PostgreSQL · Flyway
+**Frontend**: Nuxt 3 · Vue 3.5 · Vue Flow · Tailwind CSS
+**Storage**: Local filesystem · S3-compatible (TOS/MinIO/AWS)
+**AI Models**: Kling AI · Volcengine Seedance
 
 ## 📝 License
 
-MIT License — 随意使用，欢迎 PR。
+MIT License — Use freely, PRs welcome.
 
-## 🙋 关于
+## 🙋 About
 
-一个人做的 AI 视频工作流引擎。如果你也在做 AI 视频相关的东西，欢迎交流。
+A solo-built AI video workflow engine. If you're working on AI video, let's connect.
 
-Issue / PR / Star 都欢迎。
+Issues / PRs / Stars are all welcome.
