@@ -1,0 +1,64 @@
+# ============================================
+# Luciano Platform - Docker Compose
+# ============================================
+# 快速启动: docker compose up -d
+# 前端开发模式: cd luciano-web && pnpm install && pnpm dev
+
+services:
+  # === PostgreSQL ===
+  postgres:
+    image: postgres:16-alpine
+    container_name: luciano-postgres
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-luciano}
+      POSTGRES_USER: ${POSTGRES_USER:-luciano}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-luciano_dev}
+    ports:
+      - "5432:5432"
+    volumes:
+      - luciano-pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-luciano}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  # === Backend ===
+  backend:
+    build:
+      context: ./luciano_backend
+      dockerfile: Dockerfile
+    container_name: luciano-backend
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/${POSTGRES_DB:-luciano}
+      SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER:-luciano}
+      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD:-luciano_dev}
+      LUCIANO_JWT_SECRET: ${LUCIANO_JWT_SECRET:-luciano-platform-secret-key-must-be-at-least-32-characters-long-for-hmac-sha256}
+      MEDIA_STORAGE_PATH: /app/uploads/media
+      KLING_ACCESS_KEY: ${KLING_ACCESS_KEY:-}
+      KLING_SECRET_KEY: ${KLING_SECRET_KEY:-}
+      ARK_API_KEY: ${ARK_API_KEY:-}
+    ports:
+      - "8090:8090"
+    volumes:
+      - luciano-uploads:/app/uploads/media
+
+  # === Frontend ===
+  frontend:
+    build:
+      context: ./luciano-web
+      dockerfile: Dockerfile
+    container_name: luciano-frontend
+    depends_on:
+      - backend
+    environment:
+      NUXT_PUBLIC_API_BASE: http://localhost:8090/api/v1
+    ports:
+      - "3000:3000"
+
+volumes:
+  luciano-pgdata:
+  luciano-uploads:

@@ -1,0 +1,89 @@
+/* Luciano — CSS Variables + Base Styles */
+/* Apple-inspired, minimal, dark-first */
+
+:root {
+  /* Dark mode (default) */
+  --color-bg: #0A0A0A;
+  --color-card: #1A1A1A;
+  --color-card-hover: #222222;
+  --color-border: #2C2C2E;
+  --color-text: #FFFFFF;
+  --color-muted: #8E8E93;
+  --color-accent: #007AFF;
+  --color-success: #30D158;
+}
+
+.light {
+  --color-bg: #FAFAFA;
+  --color-card: #FFFFFF;
+  --color-card-hover: #F5F5F5;
+  --color-border: #E5E5EA;
+  --color-text: #1A1A1A;
+  --color-muted: #6E6E73;
+  --color-accent: #007AFF;
+  --color-success: #34C759;
+  --color-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+}
+
+/* Dark mode shadows */
+:root {
+  --color-shadow: 0 1px 3px rgba(0,0,0,0.3), 0 1px 2px rgba(0,0,0,0.2);
+}
+
+/* Base */
+* {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', Arial, sans-serif;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Scrollbar — thin, subtle */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-muted);
+}
+
+/* Selection */
+::selection {
+  background: rgba(0, 122, 255, 0.3);
+}
+
+/* Focus — Apple style ring */
+:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Transitions — everything smooth */
+a, button, input, textarea, [role="button"] {
+  transition: all 0.2s ease;
+}
+
+button:active {
+  transform: scale(0.97);
+}
+
+/* Image smooth appearance */
+img {
+  transition: opacity 0.3s ease;
+}

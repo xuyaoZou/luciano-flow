@@ -1,0 +1,3 @@
+-- V14: Add platform_status column
+-- (already executed: ALTER TABLE + index)
+-- Note: method/path NOT NULL relaxation moved to V15
