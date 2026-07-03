@@ -4,6 +4,8 @@
 
 Luciano 是一个基于节点画布的 AI 视频创作平台，支持将多个 AI 模型（Kling、Seedance 等）的能力组合成可视化工作流。
 
+![Flow Canvas Preview](docs/images/flow-canvas-preview.jpg)
+
 ## ✨ 特性
 
 - **节点画布** — ComfyUI 式的可视化工作流编辑器，拖拽节点、连线、组合能力
@@ -47,7 +49,7 @@ Luciano 是一个基于节点画布的 AI 视频创作平台，支持将多个 A
 
 ```bash
 # 1. 克隆仓库
-git clone https://github.com/your-username/luciano.git
+git clone https://github.com/xuyaoZou/luciano-flow.git
 cd luciano
 
 # 2. 配置环境变量
